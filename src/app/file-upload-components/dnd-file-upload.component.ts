@@ -5,7 +5,7 @@
     selector: 'dnd-file-upload',
     template:
     `
-        <div draggable="true" ngClass="{{dragAreaClass}}" class="dropbox">
+        <div draggable="true" ngClass="{{dndClass}}" class="dropbox">
             <div class="row">
               <div class="col-md-12 text-center" >
                 <img src="content/images/icn-upload.png" /><br/>
@@ -24,19 +24,19 @@
           <div class="row" *ngIf="errors.length > 0">  
             <div class="alert alert-danger alert-dismissable">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>Error:</strong><br/>
+                <strong>Error(s):</strong><br/>
                 <ul>
                     <li *ngFor="let err of errors">{{err}}</li>
                 </ul>
             </div>
           </div> 
     `,
-    styles: ['.error{color:#f00;}.dropbox{font-size:1.25em;padding:10px;}.dragarea{border:3px solid #bbb;background-color:#fff;color:#bbb;}.droparea{border: 3px dashed #bbb;background-color:#efefef;color:#aaa;}']
+    styles: ['.error{color:#f00;}.dropbox{font-size:1.25em;padding:10px;}.drag{border:3px solid #bbb;background-color:#fff;color:#bbb;}.drop{border: 3px dashed #bbb;background-color:#efefef;color:#aaa;}']
 })
 export class DnDFileUploadComponent implements OnInit {
 
     private errors: Array<string> = new Array<string>();
-    private dragAreaClass: string = 'dragarea';
+    private dndClass: string = 'drag';
 
     // do not permit file types to be uploaded...
     @Input() private fileExt: string;
@@ -49,38 +49,43 @@ export class DnDFileUploadComponent implements OnInit {
 
     ngOnInit() { }
 
-    private onFileChange(event: any) : void {
-        let files = event.target.files;
-        this.onFileSelect(files);
-    }
 
-    @HostListener('dragover', ['$event']) onDragOver(event: any) {
-        this.dragAreaClass = "droparea";
+    @HostListener('dragover', ['$event']) 
+    private onDragOver(event: any) {
+        this.dndClass = "drop";
         event.stopPropagation();
         event.preventDefault();
     }
 
-    @HostListener('dragenter', ['$event']) onDragEnter(event: any) {
-        this.dragAreaClass = "droparea";
+    @HostListener('dragenter', ['$event']) 
+    private onDragEnter(event: any) {
+        this.dndClass = "drop";
         event.preventDefault();
     }
 
-    @HostListener('dragend', ['$event']) onDragEnd(event: any) {
-        this.dragAreaClass = "dragarea";
+    @HostListener('dragend', ['$event']) 
+    private onDragEnd(event: any) {
+        this.dndClass = "drag";
         event.preventDefault();
     }
 
-    @HostListener('dragleave', ['$event']) onDragLeave(event: any) {
-        this.dragAreaClass = "dragarea";
+    @HostListener('dragleave', ['$event']) 
+    private onDragLeave(event: any) {
+        this.dndClass = "drag";
         event.preventDefault();
     }
-    @HostListener('drop', ['$event']) onDrop(event: any) {
-        this.dragAreaClass = "dragarea";
+    @HostListener('drop', ['$event']) 
+    private onDrop(event: any) {
+        this.dndClass = "drag";
         event.preventDefault();
         let files: any = event.dataTransfer.files; // returns FileList
         this.onFileSelect(files);
     }
 
+    private onFileChange(event: any) : void {
+        let files = event.target.files;
+        this.onFileSelect(files);
+    }
 
     private onFileSelect(files: any): void {
         // validate files and allowed extensions
